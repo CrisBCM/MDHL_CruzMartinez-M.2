@@ -83,10 +83,13 @@ function filtradoBusqueda(array){
       </article>`;
 
       cardsFiltradas.push(card);
-        
     }
 }
-container.innerHTML += cardsFiltradas;
+if(cardsFiltradas.length == 0){
+  container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
+}else{
+  container.innerHTML += cardsFiltradas;
+}
 }
 
 
