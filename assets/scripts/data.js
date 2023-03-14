@@ -170,26 +170,4 @@ var data = {
         "price":250
       }
     ]
-  };
-
-  var pastEvents = [];
-  var upcomingEvents = [];
-
-  for(e of data.events){
-    let currentDate = data.currentDate;
-    let eventDate = e.date;
-
-    let referenceDate = new Date(currentDate);
-    let date = new Date (eventDate);
-
-    console.log(date);
-
-    if(date > referenceDate){
-      upcomingEvents.push(e);
-    }else{
-      pastEvents.push(e);
-    }
-  }
-
-  console.log(upcomingEvents);
-  console.log(pastEvents);
+  }; 
