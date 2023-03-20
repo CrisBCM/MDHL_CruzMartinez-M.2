@@ -1,6 +1,5 @@
 let container = document.getElementById("div-cards");
 
-//Array category filtrado
 
 function displayChecks(array){
   categoriasArray = [];
@@ -82,12 +81,13 @@ if(cardsFiltradas.length == 0){
 }
 }
 
-displayChecks(data.events);
-displayCards(data.events);
+function iniciar(){
+  var data = JSON.parse(localStorage.getItem("data"));
 
-//Checkbox and Search event
-
-let checks = document.querySelectorAll(".input-check");
+  displayChecks(data.events);
+  displayCards(data.events);
+  
+  let checks = document.querySelectorAll(".input-check");
 const form = document.getElementById("form-search");
 
 
@@ -116,4 +116,11 @@ form.addEventListener('submit', (e)=>{
     filtradoBusqueda(data.events);
   }
 })
+
+
+}
+iniciar()
+
+//Checkbox and Search event
+
 

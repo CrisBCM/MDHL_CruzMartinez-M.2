@@ -1,23 +1,26 @@
 let container = document.getElementById("div-cards");
 
-let upcomingEvents = [];
+function filtradoUpcoming(array){
+  let upcomingEvents = [];
 
-for(e of data.events){
-  let currentDate = data.currentDate;
-  let eventDate = e.date;
-
-  let referenceDate = new Date(currentDate);
-  let date = new Date (eventDate);
-
-  if(date > referenceDate){
-    upcomingEvents.push(e);
-  }   
+  for(e of array.events){
+    let currentDate = array.currentDate;
+    let eventDate = e.date;
+  
+    let referenceDate = new Date(currentDate);
+    let date = new Date (eventDate);
+  
+    if(date > referenceDate){
+      upcomingEvents.push(e);
+    }   
+  }
+  return upcomingEvents;
 }
 
 function displayChecks(array){
   categoriasArray = [];
   
-  for(a of array){
+  for(a of array.events){
       categoriasArray.push(a.category);
   }
   
@@ -38,7 +41,7 @@ function displayChecks(array){
     checkArray.push(checkbox);
   }
   categoryContainer.innerHTML += checkArray;
-  }
+}
 
 function displayCards(array){
   let cardsArray = [];
@@ -92,11 +95,15 @@ if(cardsFiltradas.length == 0){
 }
 }
 
+function iniciar(){
+  var data = JSON.parse(localStorage.getItem("data"));
 
-displayChecks(data.events);
-displayCards(upcomingEvents);
+  let upcomingEvents = filtradoUpcoming(data);
+  console.log(upcomingEvents);
+  displayChecks(data);
+  displayCards(upcomingEvents);
 
-let checks = document.querySelectorAll(".input-check");
+  let checks = document.querySelectorAll(".input-check");
 const form = document.getElementById("form-search");
 
 form.addEventListener('submit', (e)=>{
@@ -122,3 +129,5 @@ form.addEventListener('submit', (e)=>{
     filtradoBusqueda(upcomingEvents);
   }
 })
+}
+iniciar();
