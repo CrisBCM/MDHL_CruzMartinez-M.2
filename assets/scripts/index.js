@@ -1,6 +1,5 @@
 let container = document.getElementById("div-cards");
 
-//Array category filtrado
 
 function displayChecks(array){
   categoriasArray = [];
@@ -75,15 +74,20 @@ function filtradoBusqueda(array){
       cardsFiltradas.push(card);
     }
 }
-container.innerHTML += cardsFiltradas;
+if(cardsFiltradas.length == 0){
+  container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
+}else{
+  container.innerHTML += cardsFiltradas;
+}
 }
 
-displayChecks(data.events);
-displayCards(data.events);
+function iniciar(){
+  var data = JSON.parse(localStorage.getItem("data"));
 
-//Checkbox and Search event
-
-let checks = document.querySelectorAll(".input-check");
+  displayChecks(data.events);
+  displayCards(data.events);
+  
+  let checks = document.querySelectorAll(".input-check");
 const form = document.getElementById("form-search");
 
 
@@ -110,7 +114,13 @@ form.addEventListener('submit', (e)=>{
     console.log(inputValue);
   }else{
     filtradoBusqueda(data.events);
-    console.log(data.events)
   }
 })
+
+
+}
+iniciar()
+
+//Checkbox and Search event
+
 
