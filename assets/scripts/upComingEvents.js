@@ -1,4 +1,6 @@
 let container = document.getElementById("div-cards");
+let data = JSON.parse(localStorage.getItem("data"));
+let arrayUpcoming = filtradoUpcoming(data);
 
 function filtradoUpcoming(array){
   let upcomingEvents = [];
@@ -20,7 +22,7 @@ function filtradoUpcoming(array){
 function displayChecks(array){
   categoriasArray = [];
   
-  for(a of array.events){
+  for(a of array){
       categoriasArray.push(a.category);
   }
   
@@ -46,6 +48,8 @@ function displayChecks(array){
 function displayCards(array){
   let cardsArray = [];
 
+  container.innerHTML = "";
+
   for(e of array){
     let card = `<article class="article-card mb-5 d-flex justify-content-center">
     <div class="d-flex flex-column justify-content-center">
@@ -62,72 +66,58 @@ function displayCards(array){
 cardsArray.push(card);
 
 }
-console.log(cardsArray);
+
 container.innerHTML += cardsArray;
 
 }
 
-function filtradoBusqueda(array){
-  let inputValue = document.getElementById("search").value.toLowerCase();
-  let cardsFiltradas = [];
-  for(e of array){
+displayChecks(arrayUpcoming);
+displayCards(arrayUpcoming);
 
-    if(e.name.toLowerCase().includes(inputValue)){
-      let card = `<article class="article-card mb-5 d-flex justify-content-center">
-      <div class="d-flex flex-column justify-content-center">
-      <img class="article-image mb-3" src="${e.image}" alt="event-image">
-      <h2 h2 class="h2-article m-0 container-fluid text-center mb-2">${e.name}</h2>
-      <span class="text-center mb-4">${e.description}</span>
-      <div class="container d-flex flex-row flex-wrap text-center justify-content-around mb-4">
-        <span class="span-price">$${e.price}</span>
-        <a href="./details.html?id=${e._id}" class="btn button-see">see more</a>
-      </div>
-      </div>
-      </article>`;
-
-      cardsFiltradas.push(card);
-    }
-}
-if(cardsFiltradas.length == 0){
-  container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
-}else{
-  container.innerHTML += cardsFiltradas;
-}
-}
-
-function iniciar(){
-  var data = JSON.parse(localStorage.getItem("data"));
-
-  let upcomingEvents = filtradoUpcoming(data);
-  console.log(upcomingEvents);
-  displayChecks(data);
-  displayCards(upcomingEvents);
-
-  let checks = document.querySelectorAll(".input-check");
+let checks = document.querySelectorAll(".input-check");
+let divChecks = document.getElementById("form-category");
 const form = document.getElementById("form-search");
 
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
 
-  container.innerHTML = "";
+function filtrarBusqueda(array){
+  let inputValue = document.getElementById("search").value.toLowerCase();
 
-  let checkedArray = [];
-  checks.forEach((e)=>{
-    if(e.checked == true){
-      filterArray = [];
-      filterArray = upcomingEvents.filter(element => element.category.replace(/\s+/g, '').toLowerCase() == e.value);
+  arrayFiltradoPorTexto = array.filter(elemento => elemento.name.toLowerCase().includes(inputValue));
 
-      for(element of filterArray){
-        checkedArray.push(element);
-      }
-    }
-  });
-
-  if(checkedArray.length > 0){
-    filtradoBusqueda(checkedArray);
-  }else{
-    filtradoBusqueda(upcomingEvents);
-  }
-})
+  return arrayFiltradoPorTexto;
 }
-iniciar();
+
+function filtrarEventosCheck(array){
+  
+  let checksArray = Array.from(checks);
+
+  let arrayChecked = checksArray.filter(check => check.checked);
+
+  let checkValues = arrayChecked.map(check => check.value);
+
+  arrayFiltrado = array.filter(element => checkValues.includes(element.category.replace(/\s+/g, '').toLowerCase()));
+
+  if(arrayChecked.length > 0){
+    return arrayFiltrado
+}
+return array;
+}
+
+form.addEventListener('keyup', iniciarFiltradoUpcoming);
+divChecks.addEventListener('change', iniciarFiltradoUpcoming);
+
+function iniciarFiltradoUpcoming(){
+  let filtradoBusqueda = filtrarBusqueda(arrayUpcoming);
+
+  let filtradoChecks = filtrarEventosCheck(filtradoBusqueda);
+
+  displayCards(filtradoChecks);
+
+  if(filtradoChecks.length == 0){
+    container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
+  }
+  
+}
+  
+
+

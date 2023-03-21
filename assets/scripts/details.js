@@ -1,4 +1,5 @@
 let container = document.getElementById("details-container");
+let data = JSON.parse(localStorage.getItem("data"));
 
 const queryString = location.search;
 

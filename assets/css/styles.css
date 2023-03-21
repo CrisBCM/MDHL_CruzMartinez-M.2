@@ -76,18 +76,6 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration { display: none; }
 
-.search-button{
-    background: transparent;
-    border: none;
-    outline: none;
-    margin-left: -44px;
-}
-.magnigying-glass{
-    width: 20px;
-    height: 20px;
-    object-fit: cover;
-}
-
 .article-card{
     background-color: rgba(122, 88, 102, 0.452);
     width: 350px;
@@ -109,6 +97,10 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 .span-price{
     margin-top: 7px;
+}
+
+a{
+    text-decoration: none;
 }
 .button-see,.button-form{
     border:2px solid #6a5a6d;

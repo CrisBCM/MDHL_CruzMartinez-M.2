@@ -30,6 +30,7 @@ function displayChecks(array){
 }
 
 function displayCards(array){
+  container.innerHTML ="";
   let cardsArray = [];
 
   for(e of array){
@@ -46,81 +47,64 @@ function displayCards(array){
 </article>`;
 
 cardsArray.push(card);
-
 }
-console.log(cardsArray);
+
 container.innerHTML += cardsArray;
 
 }
 
-function filtradoBusqueda(array){
-  let inputValue = document.getElementById("search").value.toLowerCase();
-  let cardsFiltradas = [];
-  for(e of array){
+let data = JSON.parse(localStorage.getItem("data"));
 
-    if(e.name.toLowerCase().includes(inputValue)){
-      let card = `<article class="article-card mb-5 d-flex justify-content-center">
-      <div class="d-flex flex-column justify-content-center">
-      <img class="article-image mb-3" src="${e.image}" alt="event-image">
-      <h2 h2 class="h2-article m-0 container-fluid text-center mb-2">${e.name}</h2>
-      <span class="text-center mb-4">${e.description}</span>
-      <div class="container d-flex flex-row flex-wrap text-center justify-content-around mb-4">
-        <span class="span-price">$${e.price}</span>
-        <a href="./details.html?id=${e._id}" class="btn button-see">see more</a>
-      </div>
-      </div>
-      </article>`;
+displayChecks(data.events);
+displayCards(data.events);  
 
-      cardsFiltradas.push(card);
-    }
-}
-if(cardsFiltradas.length == 0){
-  container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
-}else{
-  container.innerHTML += cardsFiltradas;
-}
-}
-
-function iniciar(){
-  var data = JSON.parse(localStorage.getItem("data"));
-
-  displayChecks(data.events);
-  displayCards(data.events);
-  
-  let checks = document.querySelectorAll(".input-check");
+let divChecks = document.getElementById("form-category");
 const form = document.getElementById("form-search");
+let checks = document.querySelectorAll(".input-check");
 
+function filtrarBusqueda(array){
+    let inputValue = document.getElementById("search").value.toLowerCase();
 
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
+    arrayFiltradoPorTexto = array.filter(elemento => elemento.name.toLowerCase().includes(inputValue));
+  
+    return arrayFiltradoPorTexto;
+}
+  
+function filtrarEventosCheck(array){
+  
+    let checksArray = Array.from(checks);
 
-  container.innerHTML = "";
-
-  let checkedArray = [];
-  checks.forEach((e)=>{
-    if(e.checked == true){
-      filterArray = [];
-      filterArray = data.events.filter(element => element.category.replace(/\s+/g, '').toLowerCase() == e.value);
-
-      for(element of filterArray){
-        checkedArray.push(element);
-      }
-    }
-  });
-
-  if(checkedArray.length > 0){
-    filtradoBusqueda(checkedArray);
-
-    console.log(inputValue);
-  }else{
-    filtradoBusqueda(data.events);
+    console.log(checksArray);
+  
+    let arrayChecked = checksArray.filter(check => check.checked);
+  
+    let checkValues = arrayChecked.map(check => check.value);
+  
+    console.log(checkValues);
+  
+    arrayFiltrado = array.filter(element => checkValues.includes(element.category.replace(/\s+/g, '').toLowerCase()));
+  
+    if(arrayChecked.length > 0){
+      return arrayFiltrado
   }
-})
+  return array;
+}
 
+divChecks.addEventListener("change", iniciarFiltrado);
+
+form.addEventListener('keyup', iniciarFiltrado);
+
+
+function iniciarFiltrado(){
+
+  let filtroBusqueda = filtrarBusqueda(data.events);
+
+  let filtroEventoCheck = filtrarEventosCheck(filtroBusqueda);
+
+  displayCards(filtroEventoCheck);
+
+  if(filtroEventoCheck.length == 0){
+    container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
+  }
 
 }
-iniciar()
-
-//Checkbox and Search event
-
-

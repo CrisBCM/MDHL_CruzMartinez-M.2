@@ -1,5 +1,24 @@
 let container = document.getElementById("div-cards");
+let data = JSON.parse(localStorage.getItem("data"));
+let arrayPastEvents = filtradoPast(data);
 
+function filtradoPast(array){
+  let pastEvents = [];
+  
+  for(e of array.events){
+    let currentDate = array.currentDate;
+    let eventDate = e.date;
+  
+    let referenceDate = new Date(currentDate);
+    let date = new Date (eventDate);
+  
+    if(date < referenceDate){
+      pastEvents.push(e);
+    }   
+  }
+
+  return pastEvents;
+}
 
 function displayChecks(array){
   categoriasArray = [];
@@ -29,6 +48,8 @@ function displayChecks(array){
 
 function displayCards(array){
   let cardsArray = [];
+  
+  container.innerHTML ="";
 
   for(e of array){
     let card = `<article class="article-card mb-5 d-flex justify-content-center">
@@ -46,95 +67,56 @@ function displayCards(array){
 cardsArray.push(card);
 
 }
-console.log(cardsArray);
+
 container.innerHTML += cardsArray;
 
 }
 
-function filtradoBusqueda(array){
-    let inputValue = document.getElementById("search").value.toLowerCase();
-    let cardsFiltradas = [];
-    for(e of array){
-  
-      if(e.name.toLowerCase().includes(inputValue)){
-        let card = `<article class="article-card mb-5 d-flex justify-content-center">
-        <div class="d-flex flex-column justify-content-center">
-        <img class="article-image mb-3" src="${e.image}" alt="event-image">
-        <h2 h2 class="h2-article m-0 container-fluid text-center mb-2">${e.name}</h2>
-        <span class="text-center mb-4">${e.description}</span>
-        <div class="container d-flex flex-row flex-wrap text-center justify-content-around mb-4">
-          <span class="span-price">$${e.price}</span>
-          <a href="./details.html?id=${e._id}" class="btn button-see">see more</a>
-        </div>
-        </div>
-        </article>`;
-  
-        cardsFiltradas.push(card);
-      }
-  }
-  if(cardsFiltradas.length == 0){
-    container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
-  }else{
-    container.innerHTML += cardsFiltradas;
-  }
-}
-
-function filtradoPast(array){
-  let pastEvents = [];
-
-  for(e of array.events){
-    let currentDate = array.currentDate;
-    let eventDate = e.date;
-  
-    let referenceDate = new Date(currentDate);
-    let date = new Date (eventDate);
-  
-    if(date < referenceDate){
-      pastEvents.push(e);
-    }   
-  }
-
-  return pastEvents;
-}
-
-function iniciar(){
-  
-var data = JSON.parse(localStorage.getItem("data"));
-
-console.log(data);
-
-let arrayPastEvents = filtradoPast(data);
-
-displayChecks(data.events);
+displayChecks(arrayPastEvents);
 displayCards(arrayPastEvents);
 
 let checks = document.querySelectorAll(".input-check");
+let divChecks = document.getElementById("form-category");
 const form = document.getElementById("form-search");
 
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
+function filtrarBusqueda(array){
+  let inputValue = document.getElementById("search").value.toLowerCase();
 
-  container.innerHTML = "";
+  arrayFiltradoPorTexto = array.filter(elemento => elemento.name.toLowerCase().includes(inputValue));
 
-  let checkedArray = [];
-  checks.forEach((e)=>{
-    if(e.checked == true){
-      filterArray = [];
-      filterArray = arrayPastEvents.filter(element => element.category.replace(/\s+/g, '').toLowerCase() == e.value);
-
-      for(element of filterArray){
-        checkedArray.push(element);
-      }
-    }
-  });
-
-  if(checkedArray.length > 0){
-    filtradoBusqueda(checkedArray);
-  }else{
-    filtradoBusqueda(data.events);
-  }
-})
-
+  return arrayFiltradoPorTexto;
 }
 
-iniciar();
+function filtrarEventosCheck(array){
+  
+  let checksArray = Array.from(checks);
+
+  let arrayChecked = checksArray.filter(check => check.checked);
+
+  let checkValues = arrayChecked.map(check => check.value);
+
+  arrayFiltrado = array.filter(element => checkValues.includes(element.category.replace(/\s+/g, '').toLowerCase()));
+
+  if(arrayChecked.length > 0){
+    return arrayFiltrado
+}
+return array;
+}
+
+form.addEventListener('keyup', iniciarFiltradoPast);
+
+divChecks.addEventListener("change", iniciarFiltradoPast);
+
+function iniciarFiltradoPast(){
+
+let filtradoBusqueda = filtrarBusqueda(arrayPastEvents);
+
+let filtradoChecks = filtrarEventosCheck(filtradoBusqueda);
+
+displayCards(filtradoChecks);
+
+if(filtradoChecks.length == 0){
+  container.innerHTML = "<h2 class='text-danger text-boldder'>No hay coincidencias</h2>";
+}
+
+}
